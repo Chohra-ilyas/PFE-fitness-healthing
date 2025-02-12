@@ -20,10 +20,10 @@ export class Nutrition {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  status: string;
+  @Column({ default: false })
+  nutritionStatus: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   generator: string;
 
   @Column('float', { default: 0 })

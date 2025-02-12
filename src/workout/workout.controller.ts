@@ -34,10 +34,10 @@ export class WorkoutController {
     return this.workoutService.getsingleWorkout(workoutId);
   }
 
-  @Put('/pending-workouts/:workoutId')
+  @Put('/aprove-workouts/:workoutId')
   @Roles(UserType.TRAINER)
   @UseGuards(AuthRolesGuard)
-  aprooveWorkout(
+  approveWorkout(
     @CurrentUser() payload: JWTPayload,
     @Param('workoutId', ParseIntPipe) workoutId: number,
   ) {

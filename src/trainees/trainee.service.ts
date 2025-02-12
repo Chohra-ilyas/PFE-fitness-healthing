@@ -58,7 +58,7 @@ export class TraineeService {
   async getTraineeByUserId(userId: number): Promise<Trainee> {
     const trainee = await this.traineesRepository.findOne({
       where: { user: { id: userId } },
-      relations: ['user', 'trainer', 'reviews','workout'],
+      relations: ['user', 'trainer', 'reviews','workout', 'nutrition'],
     });
 
     if (!trainee) {

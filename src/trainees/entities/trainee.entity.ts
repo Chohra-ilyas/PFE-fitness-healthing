@@ -64,7 +64,6 @@ export class Trainee {
   @OneToOne(() => Nutrition, (nutrition) => nutrition.trainee, {
     nullable: true,
   })
-  @JoinColumn()
   nutrition: Nutrition;
 
   @ManyToOne(() => Trainer, (trainer) => trainer.trainees, {

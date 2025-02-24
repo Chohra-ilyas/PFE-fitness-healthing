@@ -10,6 +10,8 @@ import {
   import { UpdateExerciseDto } from './dtos/updateExercise.dto';
   import { DaysService } from 'src/days/days.service';
   import { TrainerService } from 'src/trainers/trainer.service';
+import { Day } from 'src/days/entities/days.entity';
+import { CreateExercisesDto } from './dtos/createExesices.dto';
   
   @Injectable()
   export class ExerciseService {
@@ -46,6 +48,18 @@ import {
         createdAt: newExercise.createdAt,
         updatedAt: newExercise.updatedAt,
       };
+    }
+
+    public async createExercises(day: Day, exerciseDto: CreateExercisesDto): Promise<Exercise> {
+      const exercise = this.exerciseRepository.create({
+        exerciseName: exerciseDto.exercise,
+        exerciseSets: exerciseDto.sets,
+        exerciseReps: exerciseDto.reps,
+        exerciseDuration: exerciseDto.duration,
+        day,
+      });
+      await this.exerciseRepository.save(exercise);
+      return exercise;
     }
   
     /**

@@ -28,6 +28,9 @@ export class Exercise {
   })
   exerciseReps: string | number;
 
+  @Column({ nullable: true })
+  exerciseDuration: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => CURRENT_TIMESTAMP,

@@ -139,8 +139,8 @@ export class NutritionService {
       );
     }
 
-    nutritionPlan.protein = nutrition.protein ?? nutritionPlan.protein;
-    nutritionPlan.carb = nutrition.carb ?? nutritionPlan.carb;
+    nutritionPlan.proteins = nutrition.protein ?? nutritionPlan.proteins;
+    nutritionPlan.carbs = nutrition.carb ?? nutritionPlan.carbs;
     nutritionPlan.calories = nutrition.calories ?? nutritionPlan.calories;
 
     await this.nutritionRepository.save(nutritionPlan);

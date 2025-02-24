@@ -27,10 +27,10 @@ export class Nutrition {
   generator: string;
 
   @Column('float', { default: 0 })
-  protein: number;
+  proteins: number;
 
   @Column('float', { default: 0 })
-  carb: number;
+  carbs: number;
 
   @Column('float', { default: 0 })
   calories: number;

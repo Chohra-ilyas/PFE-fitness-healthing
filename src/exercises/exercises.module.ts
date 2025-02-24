@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ExerciseService } from './exercises.service';
 import { ExerciseController } from './exercises.controller';
 import { Exercise } from './entities/exercises.entity';
@@ -17,10 +17,11 @@ import { DaysModule } from 'src/days/days.module';
     JwtModule,
     TraineeModule,
     TrainerModule,
-    WorkoutModule,
     DaysModule,
+    forwardRef(()=> WorkoutModule),
   ],
   controllers: [ExerciseController],
   providers: [ExerciseService],
+  exports: [ExerciseService],
 })
 export class ExercisesModule {}

@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,6 +12,8 @@ import { TrainerService } from 'src/trainers/trainer.service';
 import { CreateDayDto } from './dtos/createDay.dto';
 import { WorkoutService } from 'src/workout/workout.service';
 import { UpdateDayDto } from './dtos/updateDay.dto';
+import { CreateDaysDto } from './dtos/createDays.dto';
+import { Workout } from 'src/workout/entities/workout.entity';
 
 @Injectable()
 export class DaysService {
@@ -17,6 +21,7 @@ export class DaysService {
     @InjectRepository(Day)
     private readonly dayRepository: Repository<Day>,
     private readonly trainerService: TrainerService,
+    @Inject(forwardRef(() => WorkoutService))
     private readonly workoutService: WorkoutService,
   ) {}
 
@@ -47,6 +52,16 @@ export class DaysService {
     };
   }
 
+  public async createDays(dayDto: CreateDaysDto, workout: Workout): Promise<Day> {
+    const day = this.dayRepository.create({
+      dayNumber: dayDto.day,
+      dayName: dayDto.name,
+      workout,
+    });
+    await this.dayRepository.save(day);
+    return day;
+  }
+
   /**
    * Get a day by id
    * @param dayId id of the day
@@ -56,6 +71,7 @@ export class DaysService {
     const day = await this.dayRepository.findOne({
       where: { id: dayId },
       relations: ['workout', 'workout.trainer', 'exercises'],
+      order : {dayNumber: 'ASC'}
     });
     if (!day) {
       throw new NotFoundException(`Day with ID ${dayId} not found`);

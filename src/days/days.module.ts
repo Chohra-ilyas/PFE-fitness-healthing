@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DaysService } from './days.service';
 import { DaysController } from './days.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -16,7 +16,7 @@ import { WorkoutModule } from 'src/workout/workout.module';
     JwtModule,
     TraineeModule,
     TrainerModule,
-    WorkoutModule
+    forwardRef(()=> WorkoutModule),
   ],
   controllers: [DaysController],
   providers: [DaysService],

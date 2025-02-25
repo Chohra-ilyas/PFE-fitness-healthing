@@ -129,11 +129,15 @@ export class DaysService {
   public async deleteDay(userTrainerId: number, dayId: number) {
     const day = await this.dayRepository.findOne({
       where: { id: dayId },
-      relations: ['workout', 'workout.trainer'],
+      relations: ['workout', 'workout.trainer', 'exercises'],
     });
 
     if (!day) {
       throw new NotFoundException(`Day with ID ${dayId} not found`);
+    }
+
+    if(day.exercises.length > 0) {
+      throw new BadRequestException('Day has exercises, please delete them first');
     }
 
     if (day.workout.workoutStatus) {

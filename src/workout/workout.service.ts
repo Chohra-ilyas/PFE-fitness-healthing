@@ -51,15 +51,15 @@ export class WorkoutService {
    */
   public async getsingleWorkout(workoutId: number) {
     const workout = await this.workoutRepository.findOne({
-      where: { id: workoutId, workoutStatus: true },
-      relations: ['days', 'days.exercises','trainer'],
+      where: { id: workoutId },
+      relations: ['days', 'days.exercises', 'trainer'],
       order: {
         days: {
           dayNumber: 'ASC',
         },
       },
     });
-    
+
     if (!workout) {
       throw new NotFoundException('Workout not found');
     }
@@ -76,7 +76,7 @@ export class WorkoutService {
     const trainer = await this.trainerService.getTrainerByUserId(userTrainerId);
     const workout = await this.workoutRepository.findOne({
       where: { id: workoutId, workoutStatus: false },
-      relations: ['trainer'],
+      relations: ['trainer', 'trainee', 'days', 'days.exercises'],
     });
     if (!workout) {
       throw new NotFoundException('Workout not found');
@@ -97,30 +97,65 @@ export class WorkoutService {
     if (trainee.workout) {
       throw new BadRequestException('Trainee already has a workout');
     }
-    
+
     // Create the Workout entity
     const workout = this.workoutRepository.create({
       workoutName: workoutDto.name,
-      workoutGenerator: "Generated-By-IA",
+      workoutGenerator: 'Generated-By-IA',
       workoutStatus: true,
       trainee,
     });
     await this.workoutRepository.save(workout);
-    
+
+    return await this.createWorkout(workoutDto, workout);
+  }
+
+  public async createPendingCompletedWorkout(
+    userTraineeId: number,
+    workoutDto: WorkoutDto,
+  ): Promise<Workout> {
+    const trainee = await this.traineeService.getTraineeByUserId(userTraineeId);
+    if (!trainee.trainer) {
+      throw new BadRequestException('Trainee does not have a trainer');
+    }
+    const trainer = trainee.trainer;
+    if (trainee.workout) {
+      throw new BadRequestException('Trainee already has a workout');
+    }
+
+    // Create the Workout entity
+    const workout = this.workoutRepository.create({
+      workoutName: workoutDto.name,
+      workoutGenerator: trainer.user.email,
+      workoutStatus: false,
+      trainee,
+      trainer,
+    });
+    await this.workoutRepository.save(workout);
+
+    return await this.createWorkout(workoutDto, workout);
+  }
+
+  private async createWorkout(workoutDto: WorkoutDto, workout: Workout) {
     // For each day in the workout DTO, delegate creation to DaysService
     for (const dayDto of workoutDto.days) {
       const dayEntity = await this.daysService.createDays(dayDto, workout);
-      
+
       // For each exercise in that day, delegate creation to ExerciseService
       for (const exerciseDto of dayDto.exercises) {
         await this.exerciseService.createExercises(dayEntity, exerciseDto);
       }
     }
-    
+
     // Optionally, return the full workout with its days and exercises populated
     return this.workoutRepository.findOne({
       where: { id: workout.id },
       relations: ['days', 'days.exercises'],
+      order: {
+        days: {
+          dayNumber: 'ASC',
+        },
+      },
     });
   }
 }

@@ -21,6 +21,16 @@ export class WorkoutController {
     return this.workoutService.createCompletedWorkout(payload.id, workout);
   }
 
+  @Post('/to-trainer')
+  @Roles(UserType.TRAINEE)
+  @UseGuards(AuthRolesGuard)
+  createWorkoutToModify(
+    @CurrentUser() payload: JWTPayload,
+    @Body() workout: WorkoutDto,
+  ) {
+    return this.workoutService.createPendingCompletedWorkout(payload.id, workout);
+  }
+
   @Get('/pending-workouts')
   @Roles(UserType.TRAINER)
   @UseGuards(AuthRolesGuard)

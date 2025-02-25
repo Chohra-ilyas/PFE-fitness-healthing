@@ -10,7 +10,6 @@ import { Workout } from './entities/workout.entity';
 import { Repository } from 'typeorm';
 import { TrainerService } from 'src/trainers/trainer.service';
 import { TraineeService } from 'src/trainees/trainee.service';
-import { CreateWorkoutDto } from './dtos/createWorkout.dto';
 import { WorkoutDto } from './dtos/createCompletWorkout.dto';
 import { DaysService } from 'src/days/days.service';
 import { ExerciseService } from 'src/exercises/exercises.service';

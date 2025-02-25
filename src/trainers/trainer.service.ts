@@ -104,4 +104,11 @@ export class TrainerService {
     });
     return updatedTrainer;
   }
+
+  public async increaseTrainee(trainerId: number) {
+    const trainer = await this.getTrainerById(trainerId);
+    trainer.numberOfTrainees += 1;
+    await this.trainersRepository.save(trainer);
+  }
+
 }

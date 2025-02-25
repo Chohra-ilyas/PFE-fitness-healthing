@@ -119,6 +119,9 @@ export class TraineeService {
       throw new BadRequestException('Trainer is full');
     }
 
+    // Increment the number of trainees for the trainer
+    this.trainersService.increaseTrainee(trainer.id);
+
     // Assign the trainer to the trainee
     trainee.trainer = trainer;
     await this.traineesRepository.save(trainee);

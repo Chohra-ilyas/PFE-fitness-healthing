@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   forwardRef,
   Inject,
   Injectable,
@@ -52,7 +53,10 @@ export class DaysService {
     };
   }
 
-  public async createDays(dayDto: CreateDaysDto, workout: Workout): Promise<Day> {
+  public async createDays(
+    dayDto: CreateDaysDto,
+    workout: Workout,
+  ): Promise<Day> {
     const day = this.dayRepository.create({
       dayNumber: dayDto.day,
       dayName: dayDto.name,
@@ -71,7 +75,7 @@ export class DaysService {
     const day = await this.dayRepository.findOne({
       where: { id: dayId },
       relations: ['workout', 'workout.trainer', 'exercises'],
-      order : {dayNumber: 'ASC'}
+      order: { dayNumber: 'ASC' },
     });
     if (!day) {
       throw new NotFoundException(`Day with ID ${dayId} not found`);
@@ -136,8 +140,10 @@ export class DaysService {
       throw new NotFoundException(`Day with ID ${dayId} not found`);
     }
 
-    if(day.exercises.length > 0) {
-      throw new BadRequestException('Day has exercises, please delete them first');
+    if (day.exercises.length > 0) {
+      throw new BadRequestException(
+        'Day has exercises, please delete them first',
+      );
     }
 
     if (day.workout.workoutStatus) {
@@ -154,7 +160,7 @@ export class DaysService {
   private async checkTrainer(userTrainerId: number, workout: any) {
     const trainer = await this.trainerService.getTrainerByUserId(userTrainerId);
     if (workout.trainer.id !== trainer.id) {
-      throw new BadRequestException('You are not the trainer of this workout');
+      throw new ForbiddenException('You are not the trainer of this workout');
     }
   }
 }

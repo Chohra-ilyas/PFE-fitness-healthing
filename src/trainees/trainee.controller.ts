@@ -27,7 +27,7 @@ export class TraineeController {
   //POST: ~/api/users/auth/registerTrainer
   @Post('auth/registerTrainee')
   @UseGuards(AuthGuard)
-  async registerTrainer(
+  async registerTrainee(
     @Body() body: RegisterTraineeDto,
     @CurrentUser() payload: JWTPayload,
   ) {
@@ -42,6 +42,7 @@ export class TraineeController {
   }
 
   @Get(':userId')
+  @UseGuards(AuthGuard)
   async getTraineeByUserId(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<Trainee> {
@@ -49,7 +50,8 @@ export class TraineeController {
   }
 
   @Put()
-  @UseGuards(AuthGuard)
+  @Roles(UserType.TRAINEE)
+  @UseGuards(AuthRolesGuard)
   async updateTrainee(
     @CurrentUser() payload: JWTPayload,
     @Body() body: UpdateTraineeDto,
@@ -57,8 +59,9 @@ export class TraineeController {
     return this.traineeService.updateTrainee(payload.id, body);
   }
 
-  @UseGuards(AuthGuard)
   @Put('assignTrainer/:trainerId')
+  @Roles(UserType.TRAINEE)
+  @UseGuards(AuthRolesGuard)
   async assignTrainer(
     @CurrentUser() payload: JWTPayload,
     @Param('trainerId', ParseIntPipe) trainerId: number,

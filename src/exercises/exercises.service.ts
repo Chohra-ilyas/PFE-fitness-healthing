@@ -1,5 +1,6 @@
 import {
     BadRequestException,
+    ForbiddenException,
     Injectable,
     NotFoundException,
   } from '@nestjs/common';
@@ -127,7 +128,7 @@ import { CreateExercisesDto } from './dtos/createExesices.dto';
     private async checkTrainer(userTrainerId: number, workout: any) {
       const trainer = await this.trainerService.getTrainerByUserId(userTrainerId);
       if (workout.trainer.id !== trainer.id) {
-        throw new BadRequestException('You are not the trainer of this workout');
+        throw new ForbiddenException('You are not the trainer of this workout');
       }
     }
   }

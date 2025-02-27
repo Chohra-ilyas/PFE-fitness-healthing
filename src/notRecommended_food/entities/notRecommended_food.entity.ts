@@ -10,6 +10,15 @@ export class NotRecommendedFood {
   @Column()
   foodName: string;
 
+  @Column()
+  foodType: string;
+
+  @Column()
+  reasonForNotRecommending: string;
+
+  @Column()
+  problematicComponent: string; 
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => CURRENT_TIMESTAMP,

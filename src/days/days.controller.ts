@@ -7,6 +7,7 @@ import {
   UseGuards,
   Put,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { DaysService } from './days.service';
 import { Roles } from 'src/users/decorators/user-role.decorator';
@@ -35,7 +36,7 @@ export class DaysController {
   @UseGuards(AuthRolesGuard)
   public async updateDay(
     @CurrentUser() payload: JWTPayload,
-    @Param('dayId') dayId: number,
+    @Param('dayId', ParseIntPipe) dayId: number,
     @Body() updateDay: UpdateDayDto,
   ) {
     return this.daysService.updateDay(payload.id, dayId, updateDay);

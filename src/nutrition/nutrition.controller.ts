@@ -17,6 +17,7 @@ import { JWTPayload } from '../utils/types';
 import { AuthGuard } from '../users/guards/auth.guard';
 import { CreateNutritionDto } from './dtos/createNutrition.dto';
 import { updateNutritionDto } from './dtos/updateNutrition.dto';
+import { NutritionPlanDto } from './dtos/createNutritionPlan';
 
 @Controller('api/nutritions')
 export class NutritionController {
@@ -27,9 +28,19 @@ export class NutritionController {
   @UseGuards(AuthRolesGuard)
   createNutrition(
     @CurrentUser() payload: JWTPayload,
-    @Body() nutrition: CreateNutritionDto,
+    @Body() nutrition: NutritionPlanDto,
   ) {
-    return this.nutritionService.createNutrition(payload.id, nutrition);
+    return this.nutritionService.createNutritionPlan(payload.id, nutrition);
+  }
+
+  @Post('/to-trainer')
+  @Roles(UserType.TRAINEE)
+  @UseGuards(AuthRolesGuard)
+  createNutritionToModify(
+    @CurrentUser() payload: JWTPayload,
+    @Body() nutrition: NutritionPlanDto,
+  ) {
+    return this.nutritionService.createNutritionPlanToModifyByTrainer(payload.id, nutrition);
   }
 
   @Get('/pending-nutritions')

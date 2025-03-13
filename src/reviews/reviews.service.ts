@@ -65,8 +65,9 @@ export class ReviewsService {
       });
     }
     const review = this.reviewsRepository.create({ ...dto, trainee, trainer });
+    await this.reviewsRepository.save(review);
     this.trainerService.calculateRating(userTrainerId);
-    return await this.reviewsRepository.save(review);
+    return review;
   }
 
   /**
@@ -151,6 +152,7 @@ export class ReviewsService {
         await this.traineeService.getTraineeByUserId(userTraineeId);
       if (trainee.id === review.trainee.id) {
         await this.reviewsRepository.remove(review);
+        this.trainerService.calculateRating(trainee.trainer.user.id);
         return { message: 'Review deleted successfully' };
       }
     } else if (user.userType === UserType.ADMIN) {

@@ -65,6 +65,7 @@ export class ReviewsService {
       });
     }
     const review = this.reviewsRepository.create({ ...dto, trainee, trainer });
+    this.trainerService.calculateRating(userTrainerId);
     return await this.reviewsRepository.save(review);
   }
 
@@ -153,7 +154,9 @@ export class ReviewsService {
         return { message: 'Review deleted successfully' };
       }
     } else if (user.userType === UserType.ADMIN) {
+      const trainer = review.trainer;
       await this.reviewsRepository.remove(review);
+      this.trainerService.calculateRating(trainer.user.id);
       return { message: 'Review deleted successfully' };
     }
     throw new ForbiddenException('You can only delete your review');

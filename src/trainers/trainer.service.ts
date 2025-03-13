@@ -108,4 +108,20 @@ export class TrainerService {
     trainer.numberOfTrainees += 1;
     await this.trainersRepository.save(trainer);
   }
+
+  public async calculateRating(trainerUserId: number) {
+    const trainerReview = await this.getTrainerByUserId(trainerUserId);
+    let trainerRating = trainerReview.rating;
+    trainerReview.reviews.map((review) => {
+      trainerRating += review.rating;
+    });
+    if(trainerReview.reviews.length===0){
+      trainerRating = 0;
+    }else{
+      trainerRating /= trainerReview.reviews.length;
+      trainerReview.rating = trainerRating;
+    }
+    
+    await this.trainersRepository.save(trainerReview);
+  }
 }

@@ -24,6 +24,7 @@ import { RecommendedFoodModule } from './recommended_food/recommended_food.modul
 import { Nutrition } from './nutrition/entities/nutrition.entity';
 import { NotRecommendedFood } from './notRecommended_food/entities/notRecommended_food.entity';
 import { RecommendedFood } from './recommended_food/entities/recommended_food.entity';
+import { OpenaiModule } from './openai/openai.module';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -68,6 +69,7 @@ import { RecommendedFood } from './recommended_food/entities/recommended_food.en
     NutritionModule,
     NotRecommendedFoodModule,
     RecommendedFoodModule,
+    OpenaiModule
   ],
   providers: [
     {

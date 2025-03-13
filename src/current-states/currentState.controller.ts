@@ -17,7 +17,6 @@ import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { CreateCurrentStateDto } from './dtos/currentState.dto';
 import { JWTPayload } from 'src/utils/types';
 import { UpdateCurrentStateDto } from './dtos/updateCurrentState.dto';
-import { get } from 'http';
 
 @Controller('api/current-states')
 export class CurrentStateController {

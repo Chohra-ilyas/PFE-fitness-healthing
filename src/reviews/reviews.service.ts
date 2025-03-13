@@ -123,6 +123,7 @@ export class ReviewsService {
     review.rating = dto.rating ?? review.rating;
     review.comment = dto.comment ?? review.comment;
     await this.reviewsRepository.save(review);
+    this.trainerService.calculateRating(trainee.trainer.user.id);
     return {
       id: review.id,
       reting: review.rating,

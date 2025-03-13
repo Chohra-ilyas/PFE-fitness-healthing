@@ -29,10 +29,8 @@ export class TraineeService {
    */
   public async registerTrainee(dto: RegisterTraineeDto, userId: number) {
     let user = await this.usersService.getCurrentUser(userId);
-    if (user.userType === UserType.TRAINEE)
-      throw new BadRequestException('User is already a trainee');
-    if (user.userType === UserType.TRAINER)
-      throw new BadRequestException('User is a trainer');
+    if (user.userType !== UserType.NORMAL_User)
+      throw new BadRequestException('User is already a trainee or trainer');
     user.userType = UserType.TRAINEE;
     this.usersService.updateUserType(user.id, user.userType);
     const trainee = await this.traineesRepository.create({ ...dto, user });
@@ -58,7 +56,7 @@ export class TraineeService {
   async getTraineeByUserId(userId: number): Promise<Trainee> {
     const trainee = await this.traineesRepository.findOne({
       where: { user: { id: userId } },
-      relations: ['user', 'trainer', 'reviews','workout', 'nutrition'],
+      relations: ['user', 'trainer', 'reviews', 'workout', 'nutrition'],
     });
 
     if (!trainee) {

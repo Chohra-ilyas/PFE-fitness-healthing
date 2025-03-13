@@ -25,7 +25,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: UserType, nullable: true })
+  @Column({ type: 'enum', enum: UserType, nullable: true , default : UserType.NORMAL_User })
   userType: UserType;
 
   @Column({

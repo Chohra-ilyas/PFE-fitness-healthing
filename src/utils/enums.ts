@@ -2,6 +2,7 @@ export enum UserType {
   ADMIN = 'admin',
   TRAINER = 'trainer',
   TRAINEE = 'trainee',
+  NORMAL_User = 'normal_User',
 }
 
 export enum Gender {

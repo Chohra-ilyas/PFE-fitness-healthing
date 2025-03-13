@@ -27,10 +27,8 @@ export class TrainerService {
    */
   public async registerTrainer(dto: RegisterTrainerDto, userId: number) {
     let user = await this.usersService.getCurrentUser(userId);
-    if (user.userType === UserType.TRAINER)
-      throw new BadRequestException('User is already a trainer');
-    if(user.userType === UserType.TRAINEE)
-      throw new BadRequestException('User is a trainee');
+    if (user.userType !== UserType.NORMAL_User)
+      throw new BadRequestException('User is already a trainee or trainer');
     user.userType = UserType.TRAINER;
     this.usersService.updateUserType(user.id, user.userType);
     const trainer = await this.trainersRepository.create({ ...dto, user });
@@ -110,5 +108,4 @@ export class TrainerService {
     trainer.numberOfTrainees += 1;
     await this.trainersRepository.save(trainer);
   }
-
 }

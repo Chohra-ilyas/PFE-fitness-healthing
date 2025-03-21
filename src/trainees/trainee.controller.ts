@@ -35,8 +35,6 @@ export class TraineeController {
   }
 
   @Get()
-  @Roles(UserType.ADMIN)
-  @UseGuards(AuthRolesGuard)
   async getAllTrainees(): Promise<Trainee[]> {
     return await this.traineeService.getAllTrainees();
   }

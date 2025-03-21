@@ -34,6 +34,9 @@ import { CreateExercisesDto } from './dtos/createExesices.dto';
       if (!day) {
         throw new NotFoundException(`Day with ID ${exercise.dayId} not found`);
       }
+      if(day.workout.workoutStatus){
+        throw new BadRequestException('You cannot add exercise to a completed workout');
+      }
   
       await this.checkTrainer(userTrainerId, day.workout);
   
@@ -83,6 +86,9 @@ import { CreateExercisesDto } from './dtos/createExesices.dto';
       if (!exercise) {
         throw new NotFoundException(`Exercise with ID ${exerciseId} not found`);
       }
+      if(exercise.day.workout.workoutStatus){
+        throw new BadRequestException('You cannot update exercise of a completed workout');
+      }
   
       await this.checkTrainer(userTrainerId, exercise.day.workout);
   
@@ -116,6 +122,10 @@ import { CreateExercisesDto } from './dtos/createExesices.dto';
   
       if (!exercise) {
         throw new NotFoundException(`Exercise with ID ${exerciseId} not found`);
+      }
+
+      if(exercise.day.workout.workoutStatus){
+        throw new BadRequestException('You cannot update exercise of a completed workout');
       }
   
       await this.checkTrainer(userTrainerId, exercise.day.workout);

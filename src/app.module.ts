@@ -25,6 +25,11 @@ import { Nutrition } from './nutrition/entities/nutrition.entity';
 import { NotRecommendedFood } from './notRecommended_food/entities/notRecommended_food.entity';
 import { RecommendedFood } from './recommended_food/entities/recommended_food.entity';
 import { OpenaiModule } from './openai/openai.module';
+import { ChronicDiseasesController } from './chronic-diseases/chronic-diseases.controller';
+import { ChronicDiseasesModule } from './chronic-diseases/chronic-diseases.module';
+import { TraineeChronicDiseaseModule } from './trainee-chronic-diseases/trainee-chronic-disease.module';
+import { TraineeChronicDisease } from './trainee-chronic-diseases/entities/Trainee-chronic-disease.entity';
+import { ChronicDisease } from './chronic-diseases/entities/chronic-diseases.entity';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -49,6 +54,8 @@ import { OpenaiModule } from './openai/openai.module';
             Nutrition,
             NotRecommendedFood,
             RecommendedFood,
+            TraineeChronicDisease,
+            ChronicDisease
           ],
           synchronize: process.env.NODE_ENV === 'development', // set to false in production
         };
@@ -69,7 +76,9 @@ import { OpenaiModule } from './openai/openai.module';
     NutritionModule,
     NotRecommendedFoodModule,
     RecommendedFoodModule,
-    OpenaiModule
+    OpenaiModule,
+    ChronicDiseasesModule,
+    TraineeChronicDiseaseModule
   ],
   providers: [
     {
@@ -77,5 +86,6 @@ import { OpenaiModule } from './openai/openai.module';
       useClass: ClassSerializerInterceptor,
     },
   ],
+  controllers: [ChronicDiseasesController],
 })
 export class AppModule {}

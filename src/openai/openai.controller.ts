@@ -9,9 +9,9 @@ import { FitnessPlanOutputDto } from './dtos/FitnessPlanOutput.dto';
 
 @Controller('api/openai-generate-plans')
 export class OpenaiController {
-    constructor(private readonly openaiService: OpenaiService) {}
+  constructor(private readonly openaiService: OpenaiService) {}
 
-  @Post()
+  @Post('/workout-plans')
   @Roles(UserType.TRAINEE)
   @UseGuards(AuthRolesGuard)
   async generateWorkoutPlans(

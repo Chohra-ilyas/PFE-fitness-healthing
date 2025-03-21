@@ -11,6 +11,8 @@ import { UserType } from 'src/utils/enums';
 import { RegisterTraineeDto } from './dtos/registerTrainee.dto';
 import { UpdateTraineeDto } from './dtos/updateTrainee.dto';
 import { TrainerService } from 'src/trainers/trainer.service';
+import { ChronicDiseasesService } from 'src/chronic-diseases/chronic-diseases.service';
+import { TraineeChronicDiseaseService } from 'src/trainee-chronic-diseases/trainee-chronic-disease.service';
 
 @Injectable()
 export class TraineeService {
@@ -19,6 +21,8 @@ export class TraineeService {
     private readonly traineesRepository: Repository<Trainee>,
     private readonly usersService: UsersService,
     private readonly trainersService: TrainerService,
+    private readonly chronicDiseasesService: ChronicDiseasesService,
+    private readonly traineeChronicDiseaseService: TraineeChronicDiseaseService,
   ) {}
 
   /**
@@ -33,9 +37,29 @@ export class TraineeService {
       throw new BadRequestException('User is already a trainee or trainer');
     user.userType = UserType.TRAINEE;
     this.usersService.updateUserType(user.id, user.userType);
-    const trainee = await this.traineesRepository.create({ ...dto, user });
-    await this.traineesRepository.save(trainee);
-    return trainee;
+    const trainee = await this.traineesRepository.create({
+      age: dto.age,
+      weight: dto.weight,
+      height: dto.height,
+      gender: dto.gender,
+      goal: dto.goal,
+      user,
+    });
+    const savedTrainee = await this.traineesRepository.save(trainee);
+    if (dto.chronicDiseases) {
+      for (const disease of dto.chronicDiseases) {
+        const NewChronicDisease =
+          await this.chronicDiseasesService.createChronicDisease(
+            disease.chronicDiseaseName,
+          );
+        await this.traineeChronicDiseaseService.createTraineeChronicDisease(
+          savedTrainee,
+          NewChronicDisease,
+        );
+      }
+    }
+
+    return await this.getTraineeByUserId(userId);
   }
 
   /**

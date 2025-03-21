@@ -1,6 +1,7 @@
 import { CurrentState } from 'src/current-states/entities/currentState.entity';
 import { Nutrition } from 'src/nutrition/entities/nutrition.entity';
 import { Review } from 'src/reviews/entities/reviews.entity';
+import { TraineeChronicDisease } from 'src/trainee-chronic-diseases/entities/Trainee-chronic-disease.entity';
 import { Trainer } from 'src/trainers/entities/trainer.entity';
 import { User } from 'src/users/user.entity';
 import { CURRENT_TIMESTAMP } from 'src/utils/constanst';
@@ -37,9 +38,6 @@ export class Trainee {
 
   @Column({ type: 'enum', enum: Goal, nullable: true })
   goal: Goal;
-
-  @Column({ nullable: true })
-  chronicalDiseases: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -78,4 +76,11 @@ export class Trainee {
     eager: true,
   })
   currentState: CurrentState[];
+
+  @OneToMany(
+    () => TraineeChronicDisease,
+    (diseaseLink) => diseaseLink.trainee,
+    { eager: true },
+  )
+  chronicDiseaseLinks: TraineeChronicDisease[];
 }

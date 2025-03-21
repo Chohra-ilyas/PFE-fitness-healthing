@@ -1,5 +1,25 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsArray,
+  ArrayNotEmpty,
+  ValidateNested,
+  IsString,
+  Length,
+  IsOptional,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 import { Gender, Goal } from 'src/utils/enums';
+
+class ChronicDiseaseItemDto {
+  @IsString()
+  @IsNotEmpty()
+  @Length(2, 100, {
+    message: 'Chronic disease name must be between 2 and 100 characters',
+  })
+  chronicDiseaseName: string;
+}
 
 export class RegisterTraineeDto {
   @IsNotEmpty()
@@ -20,8 +40,10 @@ export class RegisterTraineeDto {
   @IsEnum(Goal)
   goal: Goal;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsArray()
   @IsOptional()
-  chronicalDiseases?: string;
+  @ArrayNotEmpty({ message: 'chronicDiseases should not be empty' })
+  @ValidateNested({ each: true })
+  @Type(() => ChronicDiseaseItemDto)
+  chronicDiseases?: ChronicDiseaseItemDto[];
 }

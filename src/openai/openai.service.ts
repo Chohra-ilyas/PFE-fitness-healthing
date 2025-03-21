@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TraineeService } from 'src/trainees/trainee.service';
 import { FitnessPlanOutputDto } from './dtos/FitnessPlanOutput.dto';
 import { ConfigService } from '@nestjs/config';
@@ -19,7 +19,7 @@ export class OpenaiService {
 
   public async generateMultipleFitnessPlans(
     traineeUserId: number,
-  ): Promise<FitnessPlanOutputDto[]> {
+  ) : Promise<FitnessPlanOutputDto[]> {
     const trainee = await this.traineeService.getTraineeByUserId(traineeUserId);
     const prompt = this.generatePrompt(trainee);
 
@@ -53,7 +53,7 @@ export class OpenaiService {
             content: prompt,
           },
         ],
-        n:3,
+        n: 3,
         response_format: { type: 'json_object' },
       });
 
@@ -68,26 +68,32 @@ export class OpenaiService {
           return JSON.parse(content);
         } catch (error) {
           console.error('Invalid JSON response:', choice.message.content);
-          throw new Error('AI returned invalid workout plan format');
+          throw new BadRequestException(
+            'AI returned invalid workout plan format',
+          );
         }
       });
-
       return plans;
     } catch (error) {
       console.error('Error generating the workout plans:', error);
-      throw new Error(
+      throw new BadRequestException(
         'Failed to generate the workout plans. Please try again.',
       );
     }
   }
 
   private generatePrompt(trainee): string {
+    const chronicDiseases = trainee.chronicDiseaseLinks
+      .map((link) => link.chronicDisease.chronicDiseaseName)
+      .join(', ');
+
     return `The user has provided the following details:
     - Height: ${trainee.height} cm
     - Weight: ${trainee.weight} kg
     - Age: ${trainee.age} years
     - Goal: ${trainee.goal}
-    - Chronic Diseases: ${trainee.chronicDiseases}
+    - Chronic Diseases: ${chronicDiseases || 'there is no chronic diseases'}
+    - Make sure you take these statistics into consideration.
     
     Generate workout plan in JSON format. Each plan should include:
     - "name": A descriptive name for the workout plan.
@@ -100,9 +106,10 @@ export class OpenaiService {
             - "reps" (optional):can be to feilure OR The number of repetitions .
             - "duration" (optional): The duration (if applicable).
     
-    Ensure that each workout plan contains exactly 7 days and don't forget the Rest or Active Recovery days and the day 7 is for rest.
-    exemple : 
-        "day": 3,
+    -Ensure that each workout plan contains exactly 7 days and don't forget the Rest or Active Recovery days and the day 7 is for rest.
+    -You cannot make the trainee train 3 days in a row.
+    exemple for rest day: 
+        "day": day number,
         "name": "Rest or Active Recovery",
         "exercises": []
     .`;

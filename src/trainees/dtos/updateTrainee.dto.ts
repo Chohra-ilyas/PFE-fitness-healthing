@@ -24,9 +24,4 @@ export class UpdateTraineeDto {
   @IsEnum(Goal)
   @IsOptional()
   goal: Goal;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsOptional()
-  chronicalDiseases?: string;
 }

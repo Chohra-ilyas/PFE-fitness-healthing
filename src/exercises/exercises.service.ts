@@ -125,7 +125,7 @@ import { CreateExercisesDto } from './dtos/createExesices.dto';
       }
 
       if(exercise.day.workout.workoutStatus){
-        throw new BadRequestException('You cannot update exercise of a completed workout');
+        throw new BadRequestException('You cannot delete exercise of a completed workout');
       }
   
       await this.checkTrainer(userTrainerId, exercise.day.workout);

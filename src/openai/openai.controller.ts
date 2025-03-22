@@ -6,6 +6,7 @@ import { AuthRolesGuard } from 'src/users/guards/auth-role.guard';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 import { JWTPayload } from 'src/utils/types';
 import { FitnessPlanOutputDto } from './dtos/FitnessPlanOutput.dto';
+import { NutritionPlanOutputDto } from './dtos/NutritionPlanOutput.dto';
 
 @Controller('api/openai-generate-plans')
 export class OpenaiController {
@@ -18,5 +19,14 @@ export class OpenaiController {
     @CurrentUser() payload: JWTPayload,
   ): Promise<FitnessPlanOutputDto[]> {
     return this.openaiService.generateMultipleFitnessPlans(payload.id);
+  }
+
+  @Post('/nutrition-plans')
+  @Roles(UserType.TRAINEE)
+  @UseGuards(AuthRolesGuard)
+  async generateNutritionPlans(
+    @CurrentUser() payload: JWTPayload,
+  ): Promise<NutritionPlanOutputDto[]> {
+    return this.openaiService.generateMultipleNutritionPlans(payload.id);
   }
 }

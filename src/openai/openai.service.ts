@@ -88,7 +88,6 @@ export class OpenaiService {
   ): Promise<NutritionPlanOutputDto[]> {
     const trainee = await this.traineeService.getTraineeByUserId(traineeUserId);
     const prompt = this.generateNutritionPrompt(trainee);
-    console.log('prompt : ', prompt);
 
     try {
       const response = await this.openai.chat.completions.create({

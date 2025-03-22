@@ -12,7 +12,8 @@ import {
   ArrayMinSize,
   ArrayMaxSize,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { StringOrNumberTransformer } from 'src/utils/types';
 
 // 1) EXERCISE DTO
 export class ExerciseDto {
@@ -25,8 +26,8 @@ export class ExerciseDto {
   sets: number;
 
   @IsOptional()
-  @IsString()
-  reps?: string;
+  @Transform(({ value }) => new StringOrNumberTransformer().from(value))
+  reps?: string | number;
 
   @IsOptional()
   @IsString()

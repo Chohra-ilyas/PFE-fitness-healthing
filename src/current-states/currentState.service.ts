@@ -1,4 +1,8 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CurrentState } from './entities/currentState.entity';
 import { Repository } from 'typeorm';
@@ -35,10 +39,25 @@ export class CurrentStateService {
    * @returns new current state
    */
   public async addNewCurrentState(
-    traineeId: number,
+    userTraineeId: number,
     currentState: CreateCurrentStateDto,
   ) {
-    const trainee = await this.traineeService.getTraineeByUserId(traineeId);
+    const trainee = await this.traineeService.getTraineeByUserId(userTraineeId);
+    const allStates = await this.getAllTraineeCurrentState(userTraineeId);
+    const date = new Date();
+    const lastState = allStates[0];
+    if (lastState) {
+      const lastStateDate = new Date(lastState.createdAt);
+      if (
+        date.getFullYear() === lastStateDate.getFullYear() &&
+        date.getMonth() === lastStateDate.getMonth() &&
+        date.getDate() === lastStateDate.getDate()
+      ) {
+        throw new BadRequestException(
+          'You have already added a current state today',
+        );
+      }
+    }
     const newState = this.currentStateRepository.create({
       ...currentState,
       trainee,
@@ -77,10 +96,12 @@ export class CurrentStateService {
     const currentStateToUpdate = await this.currentStateRepository.findOne({
       where: { id: currentStateId },
       relations: ['trainee'],
-    })
+    });
     const trainee = await this.traineeService.getTraineeByUserId(userTraineeId);
     if (trainee.id !== currentStateToUpdate.trainee.id) {
-      throw new ForbiddenException('You are not allowed to update this current state');
+      throw new ForbiddenException(
+        'You are not allowed to update this current state',
+      );
     }
     currentStateToUpdate.currentWeight =
       currentState.currentWeight ?? currentStateToUpdate.currentWeight;
@@ -103,13 +124,13 @@ export class CurrentStateService {
     userTraineeId: number,
     currentStateId: number,
   ) {
-    const currentStateToDelete = await this.currentStateRepository.findOne({
-      where: { id: currentStateId },
-      relations: ['trainee'],
-    });
+    const currentStateToDelete =
+      await this.getSingleCurrentState(userTraineeId, currentStateId);
     const trainee = await this.traineeService.getTraineeByUserId(userTraineeId);
     if (trainee.id !== currentStateToDelete.trainee.id) {
-      throw new ForbiddenException('You are not allowed to delete this current state');
+      throw new ForbiddenException(
+        'You are not allowed to delete this current state',
+      );
     }
     await this.currentStateRepository.delete(currentStateId);
     return {

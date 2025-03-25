@@ -50,7 +50,7 @@ export class OpenaiController {
         }
       }
     }
-    
+
     throw new BadRequestException('Failed to generate valid workout plans');
   }
 
@@ -86,5 +86,12 @@ export class OpenaiController {
     }
 
     throw new BadRequestException('Failed to generate valid nutrition plans');
+  }
+
+  @Post('/generate-meal-plan')
+  @Roles(UserType.TRAINEE)
+  @UseGuards(AuthRolesGuard)
+  async generateMealPlan(@CurrentUser() payload: JWTPayload) {
+    return this.openaiService.generateDayMeal(payload.id);
   }
 }

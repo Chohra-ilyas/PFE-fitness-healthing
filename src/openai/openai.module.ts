@@ -4,9 +4,10 @@ import { TraineeModule } from 'src/trainees/trainee.module';
 import { UsersModule } from 'src/users/users.module';
 import { OpenaiController } from './openai.controller';
 import { OpenaiService } from './openai.service';
+import { NutritionModule } from 'src/nutrition/nutrition.module';
 
 @Module({
-  imports: [TraineeModule, UsersModule, JwtModule],
+  imports: [TraineeModule, UsersModule, JwtModule,NutritionModule],
   controllers: [OpenaiController],
   providers: [OpenaiService],
 })

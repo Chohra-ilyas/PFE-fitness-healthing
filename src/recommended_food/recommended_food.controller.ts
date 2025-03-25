@@ -26,7 +26,7 @@ export class RecommendedFoodController {
   ) {}
 
   @Post()
-  @Roles(UserType.TRAINER,UserType.TRAINEE)
+  @Roles(UserType.TRAINER, UserType.TRAINEE)
   @UseGuards(AuthRolesGuard)
   public async createRecommendedFood(
     @CurrentUser() payload: JWTPayload,
@@ -39,7 +39,7 @@ export class RecommendedFoodController {
   }
 
   @Put('/:recommendedFoodId')
-  @Roles(UserType.TRAINER,UserType.TRAINEE)
+  @Roles(UserType.TRAINER, UserType.TRAINEE)
   @UseGuards(AuthRolesGuard)
   public async updateRecommendedFood(
     @CurrentUser() payload: JWTPayload,
@@ -50,6 +50,19 @@ export class RecommendedFoodController {
       payload.id,
       recommendedFoodId,
       recommendedFood,
+    );
+  }
+
+  @Delete('/:recommendedFoodId')
+  @Roles(UserType.TRAINER, UserType.TRAINEE)
+  @UseGuards(AuthRolesGuard)
+  public async deleteRecommendedFood(
+    @CurrentUser() payload: JWTPayload,
+    @Param('recommendedFoodId', ParseIntPipe) recommendedFoodId: number,
+  ) {
+    return this.recommendedFoodService.deleteRecommendedFood(
+      payload.id,
+      recommendedFoodId,
     );
   }
 }

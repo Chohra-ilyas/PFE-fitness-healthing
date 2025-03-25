@@ -6,6 +6,7 @@ import {
   Put,
   ParseIntPipe,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { NotRecommendedFoodService } from './notRecommended_food.service';
 import { CreateNotRecommendedFoodDto } from './dtos/createNotRecommendedFood.dto';
@@ -44,6 +45,19 @@ export class NotRecommendedFoodController {
       payload.id,
       notRecommendedFoodId,
       notRecommendedFood,
+    );
+  }
+
+  @Delete('/:notRecommendedFoodId')
+  @Roles(UserType.TRAINER)
+  @UseGuards(AuthRolesGuard)
+  public async deleteNotRecommendedFood(
+    @CurrentUser() payload: JWTPayload,
+    @Param('notRecommendedFoodId', ParseIntPipe) notRecommendedFoodId: number,
+  ) {
+    return this.notRecommendedFoodService.deleteNotRecommendedFood(
+      payload.id,
+      notRecommendedFoodId,
     );
   }
 }

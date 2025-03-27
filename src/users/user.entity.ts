@@ -25,17 +25,22 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: UserType, nullable: true , default : UserType.NORMAL_User })
+  @Column({
+    type: 'enum',
+    enum: UserType,
+    nullable: true,
+    default: UserType.NORMAL_User,
+  })
   userType: UserType;
 
   @Column({
-    type: 'jsonb',
-    default: {
-      url: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png',
-      publicId: null,
-    },
+    default:
+      'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png',
   })
-  profilePhoto: { url: string; publicId: string | null };
+  profileImage: string;
+
+  @Column({ nullable: true })
+  profileImagePublicId: string;
 
   @Column({ default: false })
   isAccountVerified: boolean;

@@ -25,11 +25,11 @@ import { Nutrition } from './nutrition/entities/nutrition.entity';
 import { NotRecommendedFood } from './notRecommended_food/entities/notRecommended_food.entity';
 import { RecommendedFood } from './recommended_food/entities/recommended_food.entity';
 import { OpenaiModule } from './openai/openai.module';
-import { ChronicDiseasesController } from './chronic-diseases/chronic-diseases.controller';
 import { ChronicDiseasesModule } from './chronic-diseases/chronic-diseases.module';
 import { TraineeChronicDiseaseModule } from './trainee-chronic-diseases/trainee-chronic-disease.module';
 import { TraineeChronicDisease } from './trainee-chronic-diseases/entities/Trainee-chronic-disease.entity';
 import { ChronicDisease } from './chronic-diseases/entities/chronic-diseases.entity';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -78,7 +78,8 @@ import { ChronicDisease } from './chronic-diseases/entities/chronic-diseases.ent
     RecommendedFoodModule,
     OpenaiModule,
     ChronicDiseasesModule,
-    TraineeChronicDiseaseModule
+    TraineeChronicDiseaseModule,
+    CloudinaryModule
   ],
   providers: [
     {
@@ -86,6 +87,5 @@ import { ChronicDisease } from './chronic-diseases/entities/chronic-diseases.ent
       useClass: ClassSerializerInterceptor,
     },
   ],
-  controllers: [ChronicDiseasesController],
 })
 export class AppModule {}

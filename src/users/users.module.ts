@@ -6,6 +6,8 @@ import { User } from './user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthProvider } from './auth.provider';
+import { MulterModule } from '@nestjs/platform-express';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { AuthProvider } from './auth.provider';
         };
       },
     }),
+    MulterModule.register(),
+    CloudinaryModule,
   ],
   controllers: [UsersController],
   providers: [UsersService, AuthProvider],

@@ -1,7 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,12 +7,14 @@ import { AuthProvider } from './auth.provider';
 import { RegisterUserDto } from './dtos/registerUser.dto';
 import { LoginDto } from './dtos/login.dto';
 import { UserType } from 'src/utils/enums';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     private readonly authService: AuthProvider,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   /**
@@ -62,6 +61,39 @@ export class UsersService {
     this.usersRepository.save(user);
   }
 
+  /**
+   * update profile picture
+   * @param userId
+   * @param file
+   * @returns updated user
+   */
+  public async updateProfilePicture(userId: number, file: Express.Multer.File) {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) throw new BadRequestException('user does not exist');
+    if(user.profileImagePublicId){
+      await this.cloudinaryService.deleteImage(user.profileImagePublicId);
+    }
+    const { secure_url, public_id } = await this.cloudinaryService.uploadFile(file);
+    user.profileImage = secure_url;
+    user.profileImagePublicId = public_id;
+    return await this.usersRepository.save(user);
+  }
+
+  /**
+   * delete profile picture
+   * @param userId
+   * @returns updated user
+   */
+  public async deleteProfilePicture(userId: number) {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) throw new BadRequestException('user does not exist');
+    if(user.profileImagePublicId){
+      await this.cloudinaryService.deleteImage(user.profileImagePublicId);
+    }
+    user.profileImage = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png';
+    user.profileImagePublicId = null;
+    return await this.usersRepository.save(user);
+  }
   /**
    * Get all users from database
    * @returns all users

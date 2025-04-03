@@ -44,6 +44,8 @@ export class Exercise {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Day, (day) => day.exercises)
+  @ManyToOne(() => Day, (day) => day.exercises, {
+    onDelete: 'CASCADE',
+  })
   day: Day;
 }

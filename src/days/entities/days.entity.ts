@@ -22,6 +22,9 @@ export class Day {
   @Column()
   dayNumber: number;
 
+  @Column({default: false})
+  isCompleted: boolean;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => CURRENT_TIMESTAMP,
@@ -35,7 +38,7 @@ export class Day {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Workout, (workout) => workout.days)
+  @ManyToOne(() => Workout, (workout) => workout.days, { onDelete: 'CASCADE' })
   workout: Workout;
 
   @OneToMany(() => Exercise, (exercises) => exercises.day)

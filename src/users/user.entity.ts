@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Trainer } from '../trainers/entities/trainer.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class User {
@@ -23,6 +24,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column({
@@ -40,6 +42,7 @@ export class User {
   profileImage: string;
 
   @Column({ nullable: true })
+  @Exclude()
   profileImagePublicId: string;
 
   @Column({ default: false })

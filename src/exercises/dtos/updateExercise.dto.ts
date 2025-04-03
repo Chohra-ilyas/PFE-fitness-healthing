@@ -13,4 +13,8 @@ export class UpdateExerciseDto {
   @IsOptional()
   @IsStringOrNumber()
   exerciseReps?: string | number;
+
+  @IsOptional()
+  @IsString()
+  exerciseDuration?: string;
 }

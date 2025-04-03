@@ -83,6 +83,9 @@ export class WorkoutService {
     if (workout.trainer.id !== trainer.id) {
       throw new BadRequestException('You are not the trainer of this workout');
     }
+    if (workout.days.length < 7) {
+      throw new BadRequestException('Workout must have at least 7 days');
+    }
     workout.workoutStatus = true;
     await this.workoutRepository.save(workout);
     return workout;

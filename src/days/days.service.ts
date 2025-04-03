@@ -15,6 +15,7 @@ import { WorkoutService } from 'src/workout/workout.service';
 import { UpdateDayDto } from './dtos/updateDay.dto';
 import { CreateDaysDto } from './dtos/createDays.dto';
 import { Workout } from 'src/workout/entities/workout.entity';
+import { TraineeService } from 'src/trainees/trainee.service';
 
 @Injectable()
 export class DaysService {
@@ -24,6 +25,7 @@ export class DaysService {
     private readonly trainerService: TrainerService,
     @Inject(forwardRef(() => WorkoutService))
     private readonly workoutService: WorkoutService,
+    private readonly traineeService: TraineeService,
   ) {}
 
   /**
@@ -39,6 +41,13 @@ export class DaysService {
     }
 
     await this.checkTrainer(userTrainerId, workout);
+
+    const days = await this.dayRepository.find({
+      where: { workout: { id: day.workoutId } },
+    });
+
+    if (days.length >= 7)
+      throw new BadRequestException('Workout can only have 7 days');
 
     const newDay = this.dayRepository.create({ ...day, workout });
     await this.dayRepository.save(newDay);
@@ -125,6 +134,58 @@ export class DaysService {
     };
   }
 
+  public async completeDay(userTraineeId: number, dayId: number) {
+    const day = await this.dayRepository.findOne({
+      where: { id: dayId },
+      relations: ['workout', 'workout.trainee', 'exercises'],
+    });
+
+    if (!day) {
+      throw new NotFoundException(`Day with ID ${dayId} not found`);
+    }
+
+    const trainee = await this.traineeService.getTraineeByUserId(userTraineeId);
+
+    if (day.workout.trainee.id !== trainee.id) {
+      throw new ForbiddenException('You are not the trainee of this workout');
+    }
+
+    const pastDay = await this.dayRepository.findOne({
+      where: { dayNumber: day.dayNumber - 1, workout: { id: day.workout.id } },
+      relations: ['workout', 'workout.trainer', 'exercises'],
+    });
+    if (pastDay) {
+      if (!pastDay.isCompleted) {
+        throw new BadRequestException(
+          'You need to complete the previous day first',
+        );
+      }
+    }
+
+    if (day.dayNumber < 7) {
+      day.isCompleted = true;
+      await this.dayRepository.save(day);
+
+      return {
+        message:
+          "congratulations! You've completed this day , move on to the next day",
+      };
+    } else {
+      const days = await this.dayRepository.find({
+        where: { workout: { id: day.workout.id } },
+        order: { dayNumber: 'ASC' },
+      });
+      for (const day of days) {
+        day.isCompleted = false;
+        await this.dayRepository.save(day);
+      }
+      return {
+        message:
+          "congratulations! You've completed this week , move on to the next week",
+      };
+    }
+  }
+
   /**
    * Delete a day
    * @param userTrainerId id of the logged in trainer
@@ -138,12 +199,6 @@ export class DaysService {
 
     if (!day) {
       throw new NotFoundException(`Day with ID ${dayId} not found`);
-    }
-
-    if (day.exercises.length > 0) {
-      throw new BadRequestException(
-        'Day has exercises, please delete them first',
-      );
     }
 
     if (day.workout.workoutStatus) {

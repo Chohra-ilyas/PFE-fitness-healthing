@@ -49,6 +49,7 @@ import { CreateExercisesDto } from './dtos/createExesices.dto';
         exerciseName: newExercise.exerciseName,
         exerciseSets: newExercise.exerciseSets,
         exerciseReps: newExercise.exerciseReps,
+        exerciseDuration: newExercise.exerciseDuration,
         createdAt: newExercise.createdAt,
         updatedAt: newExercise.updatedAt,
       };
@@ -95,6 +96,7 @@ import { CreateExercisesDto } from './dtos/createExesices.dto';
       exercise.exerciseName = updateExerciseDto.exerciseName ?? exercise.exerciseName;
       exercise.exerciseSets = updateExerciseDto.exerciseSets ?? exercise.exerciseSets;
       exercise.exerciseReps = updateExerciseDto.exerciseReps ?? exercise.exerciseReps;
+      exercise.exerciseDuration = updateExerciseDto.exerciseDuration ?? exercise.exerciseDuration;
   
       await this.exerciseRepository.save(exercise);
   
@@ -104,6 +106,7 @@ import { CreateExercisesDto } from './dtos/createExesices.dto';
         exerciseName: exercise.exerciseName,
         exerciseSets: exercise.exerciseSets,
         exerciseReps: exercise.exerciseReps,
+        exerciseDuration: exercise.exerciseDuration,
         createdAt: exercise.createdAt,
         updatedAt: exercise.updatedAt,
       };

@@ -20,7 +20,11 @@ import { IsStringOrNumber } from 'src/users/decorators/stringOrnumber.decorator'
     @IsOptional()  
     @IsStringOrNumber({ message: 'exerciseReps must be a string or number' })  
     exerciseReps?: string | number;  
-  
+
+    @IsOptional()
+    @IsString()
+    exerciseDuration?: string;
+    
     @IsNotEmpty()  
     @IsNumber()  
     dayId: number;  

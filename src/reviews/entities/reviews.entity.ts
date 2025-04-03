@@ -34,9 +34,9 @@ export class Review {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Trainer, (trainer) => trainer.reviews)
+  @ManyToOne(() => Trainer, (trainer) => trainer.reviews , { onDelete: 'CASCADE' })
   trainer : Trainer;
 
-  @ManyToOne(() => Trainee, (trainee) => trainee.reviews)
+  @ManyToOne(() => Trainee, (trainee) => trainee.reviews , { onDelete: 'CASCADE' })
   trainee : Trainee;
 }

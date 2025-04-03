@@ -42,6 +42,16 @@ export class DaysController {
     return this.daysService.updateDay(payload.id, dayId, updateDay);
   }
 
+  @Put('/complete/:dayId')
+  @Roles(UserType.TRAINEE)
+  @UseGuards(AuthRolesGuard)
+  public async completeDay(
+    @CurrentUser() payload: JWTPayload,
+    @Param('dayId', ParseIntPipe) dayId: number,
+  ) {
+    return this.daysService.completeDay(payload.id, dayId);
+  }
+
   @Delete('/:dayId')
   @Roles(UserType.TRAINER)
   @UseGuards(AuthRolesGuard)

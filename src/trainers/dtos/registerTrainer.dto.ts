@@ -7,6 +7,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { Gender } from 'src/utils/enums';
 
 export class RegisterTrainerDto {
   @IsNotEmpty()
@@ -19,6 +20,9 @@ export class RegisterTrainerDto {
   @Max(30, { message: 'Maximum number of trainees is 30' })
   @Min(1, { message: 'Minimum number of trainees is 1' })
   maximumTrainees: number;
+
+  @IsString()
+  gender : Gender;
 
   @IsNotEmpty()
   @IsString()

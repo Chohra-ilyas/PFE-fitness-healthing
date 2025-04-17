@@ -40,7 +40,7 @@ export class ReviewsService {
     const trainee = await this.traineeService.getTraineeByUserId(userTraineeId);
     const trainer = await this.trainerService.getTrainerByUserId(userTrainerId);
     if (userTraineeId === userTrainerId) {
-      throw new NotFoundException('Trainee and Trainer cannot be the same');
+      throw new BadRequestException('Trainee and Trainer cannot be the same');
     }
     const trainerId = trainer.id;
     const traineeId = trainee.id;
@@ -48,7 +48,7 @@ export class ReviewsService {
       throw new BadRequestException('You need to have a trainer to review');
     }
     if (trainerId !== trainee.trainer.id) {
-      throw new ForbiddenException('you can review only your trainer');
+      throw new BadRequestException('you can review only your trainer');
     }
     const reviews = await this.reviewsRepository.find({
       where: { trainee: { id: traineeId } },
@@ -162,6 +162,6 @@ export class ReviewsService {
       this.trainerService.calculateRating(trainer.user.id);
       return { message: 'Review deleted successfully' };
     }
-    throw new ForbiddenException('You can only delete your review');
+    throw new BadRequestException('You can only delete your review');
   }
 }

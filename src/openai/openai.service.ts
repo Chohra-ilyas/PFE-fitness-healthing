@@ -25,31 +25,54 @@ export class OpenaiService {
   ): Promise<FitnessPlanOutputDto[]> {
     const trainee = await this.traineeService.getTraineeByUserId(traineeUserId);
     const prompt = this.generateWorkoutPrompt(trainee);
-
+    console.log(prompt);
     try {
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
-            content: `You are a fitness coach API. Respond ONLY with valid JSON in this exact structure:
-                {
-                  "name": "Plan Name",
-                  "days": [
-                    {
-                      "day": 1,
-                      "name": "Day Name",
-                      "exercises": [
-                        {
-                          "exercise": "Exercise Name",
-                          "sets": 3,
-                          "reps": 12,
+            content: `
+              You are a fitness‑coach API.  You must respond *only* with a JSON object that VALIDATES against this schema—nothing else, no markdown, no trailing commas, no explanations:
+
+              {
+                "type": "object",
+                "properties": {
+                  "name":   { "type": "string" },
+                  "days": {
+                    "type": "array",
+                    "minItems": 7,
+                    "maxItems": 7,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "day":       { "type": "integer", "minimum": 1, "maximum": 7 },
+                        "name":      { "type": "string" },
+                        "exercises": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "exercise": { "type": "string" },
+                              "sets":     { "type": "integer", "minimum": 1 },
+                              "reps": {
+                                "oneOf": [
+                                  { "type": "integer", "minimum": 1 },
+                                  { "type": "string", "enum": ["failure"] }
+                                ]
+                              },
+                              "duration": { "type": "string" }
+                            },
+                            "required": ["exercise","sets"]
+                          }
                         }
-                      ]
+                      },
+                      "required": ["day","name","exercises"]
                     }
-                  ]
-                }
-                Do not include any conversational text or explanations.`,
+                  }
+                },
+                "required": ["name","days"]
+              }`,
           },
           {
             role: 'user',
@@ -97,28 +120,45 @@ export class OpenaiService {
         messages: [
           {
             role: 'system',
-            content: `You are a Nutrition specialist API. Respond ONLY with valid JSON in this exact structure:
-                {
-                  "proteins": "number representing grams of protein",
-                  "carbs": "number representing grams of carbohydrates",
-                  "calories": "number representing total calories",
-                  "recommendedFoods": [
-                    {
-                      "foodType": "category of food (e.g., Carbohydrates, Proteins, Fats, etc.)",
-                      "foodName": "name of the recommended food"
-                    }
-                  ],
-                  "notRecommendedFoods": [
-                    {
-                      "foodType": "category of food",
-                      "foodName": "name of the not recommended food",
-                      "reasonForNotRecommending": "explanation why this food is not recommended",
-                      "problematicComponent": "specific component in the food that is problematic"
-                    }
-                  ]
+            content: `
+            You are a Nutrition Specialist API.  You must respond ONLY with a JSON object that *validates* against the following JSON Schema.  Do NOT include any markdown, code fences, comments, explanations or extra fields—just the raw JSON.
+            {
+              "type": "object",
+              "properties": {
+                "proteins": { "type": "number" },
+                "carbs":    { "type": "number" },
+                "calories": { "type": "number" },
+                "recommendedFoods": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "foodType": { "type": "string" },
+                      "foodName": { "type": "string" }
+                    },
+                    "required": ["foodType","foodName"],
+                    "additionalProperties": false
+                  }
+                },
+                "notRecommendedFoods": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "foodType":                 { "type": "string" },
+                      "foodName":                 { "type": "string" },
+                      "reasonForNotRecommending": { "type": "string" },
+                      "problematicComponent":     { "type": "string" }
+                    },
+                    "required": ["foodType","foodName","reasonForNotRecommending","problematicComponent"],
+                    "additionalProperties": false
+                  }
                 }
-
-            Do not include any conversational text or explanations.`,
+              },
+              "required": ["proteins","carbs","calories","recommendedFoods","notRecommendedFoods"],
+              "additionalProperties": false
+            }
+            `.trim()
           },
           {
             role: 'user',
@@ -227,6 +267,7 @@ export class OpenaiService {
     
     -Ensure that each workout plan contains exactly 7 days and don't forget the Rest or Active Recovery days and the day 7 is for rest.
     -You cannot make the trainee train 3 days in a row.
+    -make sure that have 7 days
     exemple for rest day: 
         "day": day number,
         "name": "Rest or Active Recovery",
@@ -234,10 +275,9 @@ export class OpenaiService {
     .`;
   }
 
-  public async generateDayMeal(
-    traineeUserId: number,
-  ) {
-    const nutritionPlan = await this.nutritionService.getNutritionByTraineeId(traineeUserId);
+  public async generateDayMeal(traineeUserId: number) {
+    const nutritionPlan =
+      await this.nutritionService.getNutritionByTraineeId(traineeUserId);
     const prompt = this.generateDayMealPrompt(nutritionPlan);
 
     try {
@@ -305,13 +345,12 @@ export class OpenaiService {
   }
 
   private generateDayMealPrompt(nutritionPlan): string {
-
     return `you have to provide a meal plan for the day based on the following nutrition plan:
     - Proteins: ${nutritionPlan.proteins} grams
     - Carbs: ${nutritionPlan.carbs} grams
     - Calories: ${nutritionPlan.calories} calories
-    - Recommended Foods: ${nutritionPlan.recommendedFoods.map(food => food.foodName).join(', ')}
-    - Not Recommended Foods: ${nutritionPlan.notRecommendedFoods.map(food => food.foodName).join(', ')}
+    - Recommended Foods: ${nutritionPlan.recommendedFoods.map((food) => food.foodName).join(', ')}
+    - Not Recommended Foods: ${nutritionPlan.notRecommendedFoods.map((food) => food.foodName).join(', ')}
     - Make sure you take these statistics into consideration.
     - Make sure that can not exceed the daily calories and proteins and carbs.
     `;

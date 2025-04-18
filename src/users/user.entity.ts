@@ -1,15 +1,12 @@
 import { CURRENT_TIMESTAMP } from 'src/utils/constanst';
-import { UserType } from 'src/utils/enums';
+import { Gender, UserType } from 'src/utils/enums';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Trainer } from '../trainers/entities/trainer.entity';
 import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'users' })
@@ -26,6 +23,12 @@ export class User {
   @Column()
   @Exclude()
   password: string;
+
+  @Column({ type: 'enum', enum: Gender, nullable: true })
+  gender: Gender;
+    
+  @Column()
+  age: number;
 
   @Column({
     type: 'enum',

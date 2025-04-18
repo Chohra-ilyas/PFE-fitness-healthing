@@ -5,7 +5,7 @@ import { TraineeChronicDisease } from 'src/trainee-chronic-diseases/entities/Tra
 import { Trainer } from 'src/trainers/entities/trainer.entity';
 import { User } from 'src/users/user.entity';
 import { CURRENT_TIMESTAMP } from 'src/utils/constanst';
-import { Gender, Goal } from 'src/utils/enums';
+import { Goal } from 'src/utils/enums';
 import { Workout } from 'src/workout/entities/workout.entity';
 import {
   Column,
@@ -25,16 +25,10 @@ export class Trainee {
   id: number;
 
   @Column()
-  age: number;
-
-  @Column()
   weight: number;
 
   @Column()
   height: number;
-
-  @Column({ type: 'enum', enum: Gender, nullable: true })
-  gender: Gender;
 
   @Column({ type: 'enum', enum: Goal, nullable: true })
   goal: Goal;

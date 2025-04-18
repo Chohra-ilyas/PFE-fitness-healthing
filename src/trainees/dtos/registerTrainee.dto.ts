@@ -10,7 +10,7 @@ import {
   IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { Gender, Goal } from 'src/utils/enums';
+import { Goal } from 'src/utils/enums';
 
 class ChronicDiseaseItemDto {
   @IsString()
@@ -22,9 +22,6 @@ class ChronicDiseaseItemDto {
 }
 
 export class RegisterTraineeDto {
-  @IsNotEmpty()
-  @IsNumber()
-  age: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -33,9 +30,6 @@ export class RegisterTraineeDto {
   @IsNotEmpty()
   @IsNumber()
   height: number;
-
-  @IsEnum(Gender)
-  gender: Gender;
 
   @IsEnum(Goal)
   goal: Goal;

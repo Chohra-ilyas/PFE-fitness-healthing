@@ -26,7 +26,6 @@ export class OpenaiService {
   ): Promise<FitnessPlanOutputDto[]> {
     const trainee = await this.traineeService.getTraineeByUserId(traineeUserId);
     const prompt = generateWorkoutPrompt(trainee);
-    console.log(prompt);
     try {
       const response = await this.openai.chat.completions.create({
         model: 'gpt-4o-mini',

@@ -26,7 +26,7 @@ export class AuthProvider {
   public async registerUser(
     registerDtoUser: RegisterUserDto,
   ): Promise<AccessTokenType> {
-    const { email, password, username } = registerDtoUser;
+    const { email, password, username , gender , age } = registerDtoUser;
     const userFromDb = await this.usersRepository.findOne({ where: { email } });
     if (userFromDb) {
       throw new BadRequestException('User already exists');
@@ -37,6 +37,8 @@ export class AuthProvider {
       email,
       password: hashedPassword,
       username,
+      age,
+      gender,
     });
     newUser = await this.usersRepository.save(newUser);
     const accessToken = await this.generateToken(newUser);

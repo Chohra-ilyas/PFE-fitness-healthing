@@ -21,15 +21,17 @@ export const workoutPromptcontent = `
                             "properties": {
                               "exercise": { "type": "string" },
                               "sets":     { "type": "integer", "minimum": 1 },
-                              "reps": {
-                                "oneOf": [
-                                  { "type": "integer", "minimum": 1 },
-                                  { "type": "string", "enum": ["failure"] }
-                                ]
-                              },
-                              "duration": { "type": "string" }
+                              "oneOf:{
+                                "reps": {
+                                  "oneOf": [
+                                    { "type": "integer", "minimum": 1 },
+                                    { "type": "string", "enum": ["failure"] }
+                                  ]
+                                },
+                                "duration": { "type": "string" }
+                              }
                             },
-                            "required": ["exercise","sets"]
+                            "required": ["exercise","sets","reps || duration"],
                           }
                         }
                       },
@@ -147,7 +149,8 @@ export function generateWorkoutPrompt(trainee): string {
             - "exercise": The name of the exercise.
             - "sets": The number of sets.
             - "reps" (optional):can be to feilure OR The number of repetitions .
-            - "duration" (optional): The duration (if applicable).
+            - "duration" (optional): The duration of the exercise (if applicable).
+            - It should be taken into account that the difference between duration and rep exercises like plank is a duration exercise.
     
     -Ensure that each workout plan contains exactly 7 days and don't forget the Rest or Active Recovery days and the day 7 is for rest.
     -You cannot make the trainee train 3 days in a row.

@@ -38,10 +38,8 @@ export class TraineeService {
     user.userType = UserType.TRAINEE;
     this.usersService.updateUserType(user.id, user.userType);
     const trainee = await this.traineesRepository.create({
-      age: dto.age,
       weight: dto.weight,
       height: dto.height,
-      gender: dto.gender,
       goal: dto.goal,
       user,
     });

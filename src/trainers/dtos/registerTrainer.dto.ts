@@ -21,9 +21,6 @@ export class RegisterTrainerDto {
   @Min(1, { message: 'Minimum number of trainees is 1' })
   maximumTrainees: number;
 
-  @IsString()
-  gender : Gender;
-
   @IsNotEmpty()
   @IsString()
   @Length(10, 300)

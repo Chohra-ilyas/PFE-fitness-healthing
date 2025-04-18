@@ -23,11 +23,6 @@ import { Gender } from 'src/utils/enums';
     @Max(30, { message: 'Maximum number of trainees is 30' })
     @Min(1, { message: 'Minimum number of trainees is 1' })
     maximumTrainees?: number;
-
-    @IsNotEmpty()
-    @IsString()
-    @IsOptional()
-    gender?: Gender;
   
     @IsNotEmpty()
     @IsOptional()

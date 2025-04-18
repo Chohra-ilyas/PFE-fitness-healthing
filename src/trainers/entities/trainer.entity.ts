@@ -14,7 +14,6 @@ import { Trainee } from 'src/trainees/entities/trainee.entity';
 import { Review } from 'src/reviews/entities/reviews.entity';
 import { Workout } from 'src/workout/entities/workout.entity';
 import { Nutrition } from 'src/nutrition/entities/nutrition.entity';
-import { Gender } from 'src/utils/enums';
 
 @Entity({ name: 'trainers' })
 export class Trainer {
@@ -35,9 +34,6 @@ export class Trainer {
 
   @Column()
   description: string;
-
-  @Column({ type: 'enum', enum: Gender, nullable: true })
-  gender: Gender;
 
   @Column({ nullable: true })
   rating: number;

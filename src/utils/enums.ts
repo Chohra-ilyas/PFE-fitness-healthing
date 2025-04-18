@@ -12,8 +12,9 @@ export enum Gender {
 
 export enum Goal{
   LOSE_WEIGHT = 'lose weight',
-  GAIN_WEIGHT = 'gain weight',
   MAINTAIN_WEIGHT = 'maintain weight',
+  INCREASE_HEIGHT = 'increase height',
   MUSCLE_GAIN = 'muscle gain',
+  MAINTAIN_HEALTH = 'maintain health'
 }
 
